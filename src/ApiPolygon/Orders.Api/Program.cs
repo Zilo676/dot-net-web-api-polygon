@@ -41,29 +41,35 @@ public class Program
 // Configure the HTTP request pipeline.
 
 
-        if (!app.Environment.IsProduction())
-        {
+        // if (!app.Environment.IsProduction())
+        // {
+        //     app.UseSwagger();
+        //     app.UseSwaggerUI();
+        // }
             app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-
-        if (app.Environment.EnvironmentName != "ProductionStage")
-        {
-            using (var scope = app.Services.CreateScope())
+            app.UseSwaggerUI(c =>
             {
-                var services = scope.ServiceProvider;
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "HttpBin Proxy API V1");
+                c.RoutePrefix = "swagger"; // Доступ по /swagger
+            });
+      
 
-                var context = services.GetRequiredService<OrdersContext>();
-                context.Database.Migrate();
-            }
-        }
+        // if (app.Environment.EnvironmentName != "ProductionStage")
+        // {
+        //     using (var scope = app.Services.CreateScope())
+        //     {
+        //         var services = scope.ServiceProvider;
 
-        if (app.Environment.EnvironmentName != "ProductionStage")
-        {
-            app.UseHttpsRedirection();
-        }
+        //         var context = services.GetRequiredService<OrdersContext>();
+        //         context.Database.Migrate();
+        //     }
+        // }
 
+        // if (app.Environment.EnvironmentName != "ProductionStage")
+        // {
+        //     app.UseHttpsRedirection();
+        // }
+        app.UseHttpsRedirection();
         // Add custom global exception handler middleware
         // Add Serilog
         app.UseAuthorization();

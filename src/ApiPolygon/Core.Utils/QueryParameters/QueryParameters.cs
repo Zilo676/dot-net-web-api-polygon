@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Core.Utils.QueryParameters;
 
-public abstract class QueryParameters : IPaginationCreator, IQueryParametersSorting
+public class QueryParameters : IPaginationCreator, IQueryParametersSorting
 {
     public QueryParameters()
     {

@@ -3,6 +3,7 @@ using Core.Utils.BaseService;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Data.Models;
 using Orders.Service.DTO;
+using Orders.Service.Interfaces;
 
 namespace Orders.Api.Controllers;
 
@@ -10,7 +11,7 @@ namespace Orders.Api.Controllers;
 [ApiController]
 public class OrdersController : CrudController<Order, OrderDto>
 {
-    public OrdersController(IBaseService<Order, OrderDto> service, ILogger<CrudController<Order, OrderDto>> logger) :
+    public OrdersController(IOrdersService service, ILogger<CrudController<Order, OrderDto>> logger) :
         base(service, logger)
     {
         
