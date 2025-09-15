@@ -8,6 +8,8 @@ public class Animal
     {
         Console.WriteLine("Animal.MakeSound()");
     }
+
+    public void Eat() => Console.WriteLine("Animal.Eat()");
 }
 
 // Наследник
@@ -15,7 +17,7 @@ public class Dog : Animal
 {
     public override void MakeSound()
     {
-        Console.WriteLine("Гав!");
+        Console.WriteLine("Dog.MakeSound()");
     }
 
     public void Fetch() => Console.WriteLine("Принёс мяч!");
@@ -24,5 +26,6 @@ public class Dog : Animal
 // Ещё один наследник
 public class Cat : Animal
 {
-    public override void MakeSound() => Console.WriteLine("Мяу!");
+    public new void MakeSound() => Console.WriteLine("Cat.MakeSound()");
+    public void Eat() => Console.WriteLine("Cat.Eat()");
 }
