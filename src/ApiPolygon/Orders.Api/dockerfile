@@ -1,0 +1,25 @@
+FROM  mcr.microsoft.com/dotnet/sdk:9.0 as build
+WORKDIR /
+
+COPY ["Core.Utils/", "./Core.Utils/"]
+COPY ["Core.Data/", "./Core.Data/"]
+COPY ["Orders.Data/", "./Orders.Data/"]
+COPY ["Orders.Service/", "./Orders.Service/"]
+COPY ["Core.Api.QueryFilter/","./Core.Api.QueryFilter/"]
+
+
+WORKDIR /app
+COPY ["Orders.Api/", "./"]
+
+RUN dotnet publish "./Orders.Api.csproj" \
+  -c Release \
+  -o ./publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 as base
+
+EXPOSE 80
+EXPOSE 443
+
+WORKDIR /app
+COPY --from=build /app/publish ./
+ENTRYPOINT [ "dotnet", "Orders.Api.dll" ]

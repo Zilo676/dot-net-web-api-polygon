@@ -1,0 +1,77 @@
+version: "3.8"
+name: "api-polygon"
+
+services:
+
+  sql-server:
+    container_name: sql-server
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    ports:
+      - "1440:1433"
+    environment:
+      SA_PASSWORD: "Strong_p@ssword12"
+      ACCEPT_EULA: "Y"
+    networks:
+      - my-net
+
+  api-orders:
+    build:
+      context: "./"
+      dockerfile: "./Orders.Api/dockerfile"
+    container_name: "api-orders"
+    volumes:
+      - "~/.aspnet/https/:/https:ro"
+    depends_on:
+      - sql-server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80;
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Qwerty123
+    ports:
+      - 5001:443
+      - 5051:80
+    networks:
+      - my-net
+
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: my-postgres
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret123
+      PGDATA: /var/lib/postgresql/data/pgdata  # Лучше хранить данные отдельно
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Опционально: скрипт инициализации
+    networks:
+      - my-net
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: my-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.dev
+      PGADMIN_DEFAULT_PASSWORD: pgadmin-secret
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - my-net
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  my-net:
+    driver: bridge
